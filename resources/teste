@@ -1,0 +1,82 @@
+Teste para Estagiário de Desenvolvimento Web com Laravel, PostgreSQL e Redis - Hotelaria
+
+PRAZO: 7 DIAS CORRIDOS
+
+OBS: A aplicação deve usar autenticação para todas as rotas.
+
+Parte 1: Laravel
+
+Rotas e Controladores:
+
+Crie uma rota em Laravel que corresponda a um controlador chamado QuartoController e ao método listarDisponiveis.
+O método listarDisponiveis deve retornar uma lista de quartos disponíveis para reserva.
+Utilize Eloquent para acessar os dados.
+Middleware:
+
+Migrações:
+
+Crie uma migração para uma tabela chamada reservas com campos como data_checkin, data_checkout, quarto_id e cliente_id.
+Parte 2: PostgreSQL
+
+Modelo Eloquent:
+
+Crie um modelo Eloquent chamado Reserva para a tabela reservas.
+Adicione um método no modelo para recuperar todas as reservas feitas por um cliente específico.
+Consulta SQL:
+
+Escreva uma consulta SQL para encontrar todos os quartos que estão ocupados em uma data específica.
+Relacionamentos:
+
+Lista reservas de clientes com um campo id, crie um relacionamento no modelo Cliente que retorne todas as reservas associadas a esse cliente.
+
+Parte 3 (Opcional): Redis
+
+Configuração do Redis:
+
+No arquivo de configuração do Laravel, configure o Laravel para usar Redis como driver de cache.
+Certifique-se de que o Laravel utilize Redis para armazenar informações temporárias relevantes para reservas.
+Cache com Redis:
+
+Escreva um código que armazene temporariamente no Redis a lista de quartos disponíveis obtida na primeira questão, utilizando uma chave chamada quartos_disponiveis.
+Recupere essa lista do Redis e retorne-a como resposta atualizando a parte 1.
+Observações Finais:
+
+Certifique-se de que o código é limpo, bem comentado e segue as melhores práticas do Laravel.
+O estagiário pode utilizar as versões mais recentes do Laravel, PostgreSQL e Redis.
+O teste pode ser feito em um projeto Laravel novo ou em um projeto existente, conforme apropriado.
+Esse teste abrange tópicos relacionados à gestão de quartos e reservas em um contexto hoteleiro, utilizando Laravel, PostgreSQL e Redis. Adapte conforme necessário para atender às necessidades específicas da sua empresa e às habilidades desejadas para o estagiário.
+
+
+OBSERVAÇÃO: O teste pode ser feito só como api ou não.
+No caso de API o teste tem que ter uma documentação de teste para ser testado via Postman.
+
+Tabelas usada para o teste:
+
+Schema::create('quartos', function (Blueprint $table) {
+$table->id();
+$table->string('numero');
+$table->integer('capacidade');
+$table->decimal('preco_diaria', 8, 2);
+$table->boolean('disponivel')->default(true);
+$table->timestamps();
+});
+
+Schema::create('reservas', function (Blueprint $table) {
+$table->id();
+$table->date('data_checkin');
+$table->date('data_checkout');
+$table->unsignedBigInteger('quarto_id');
+$table->unsignedBigInteger('cliente_id');
+$table->timestamps();
+
+$table->foreign('quarto_id')->references('id')->on('quartos')->onDelete('cascade');
+$table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
+});
+
+Schema::create('clientes', function (Blueprint $table) {
+$table->id();
+$table->string('nome');
+$table->string('email')->unique();
+$table->string('telefone');
+$table->timestamps();
+});
