@@ -43,7 +43,7 @@ composer install
 Para criar as tabelas necessárias no banco de dados, execute as migrações com o comando:
 
 ```
-php artisan migrate
+php artisan migrate:refresh
 ```
 Para criar o Seed do usuario use o comando:
 ```
