@@ -2,63 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reserva;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ReservaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function index(): JsonResponse
     {
-        //
+        $reserva = Reserva::with(['quarto', 'cliente'])->get();
+
+        return response()->json($reserva, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request): JsonResponse
     {
-        //
+        $data = $request->validate([
+            'data_checkin' => 'required|date',
+            'data_checkout' => 'required|date',
+            'quarto_id' => 'required|exists:quartos,id',
+            'cliente_id' => 'required|exists:clientes,id',
+        ]);
+
+        $reserva = Reserva::create($data);
+        return response()->json($reserva, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $reserva = Reserva::with(['quarto', 'cliente'])->find($id);
+        if ($reserva === null) {
+            return response()->json(["Error" => "A Reserva com o ID: {$id} não foi encontrada"], 404);
+        }
+        return response()->json($reserva, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-        //
+        $reserva = Reserva::find($id);
+        if ($reserva === null) {
+            return response()->json(["Error" => "A Reserva com o ID: {$id} não foi encontrada"], 404);
+        }
+
+        $data = $request->validate([
+            'data_checkin' => 'required|date',
+            'data_checkout' => 'required|date',
+            'quarto_id' => 'required|exists:quartos,id',
+            'cliente_id' => 'required|exists:clientes,id',
+        ]);
+
+        $reserva->update($data);
+        $reserva->save();
+        return response()->json($reserva, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
-    }
+        $reserva = Reserva::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($reserva === null) {
+            return response()->json(["Error" => "A Reserva com o ID: {$id} não foi encontrada"], 404);
+        }
+
+        $reserva->delete();
+
+        return response()->json($reserva, 204);
     }
 }
