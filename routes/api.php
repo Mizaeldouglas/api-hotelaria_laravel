@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\QuartoController;
 use App\Http\Controllers\ReservaController;
@@ -21,9 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/quartos/disponiveis', [QuartoController::class, 'listarDisponiveis']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::resource('clientes', ClienteController::class);
-Route::resource('quartos', QuartoController::class);
-Route::resource('reservas', ReservaController::class);
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/quartos/disponiveis', [QuartoController::class, 'listarDisponiveis']);
+    Route::resource('clientes', ClienteController::class);
+    Route::resource('quartos', QuartoController::class);
+    Route::resource('reservas', ReservaController::class);
+});
